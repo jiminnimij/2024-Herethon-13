@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 
 # Create your models here.
-User = get_user_model()
 
 # 채용게시판 게시글 모델
 class RecruitboardPost(models.Model):
