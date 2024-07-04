@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 
     # DRF
     'rest_framework',
-<<<<<<< HEAD
+
     'rest_framework_simplejwt',
     'freeboard',
     'api',
@@ -53,12 +53,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
     'rest_framework.authtoken',
-=======
 
     # internal APP
-    'freeboard',
     'recruitboard',
->>>>>>> b3ed7cb9d7611952cca92e11be84824aea10156f
+
 ]
 TOKEN_MODEL = None
 

@@ -23,13 +23,11 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('freeboard/', include('freeboard.urls')),
-<<<<<<< HEAD
+
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/kakao/', include('api.urls')),
-=======
-    path('recruitboard/', include('recruitboard.urls'))
->>>>>>> b3ed7cb9d7611952cca92e11be84824aea10156f
+    path('recruitboard/', include('recruitboard.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
