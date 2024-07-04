@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # internal APP
     'freeboard',
     'recruitboard',
+    'place'
 ]
 
 MIDDLEWARE = [
