@@ -23,7 +23,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('freeboard/', include('freeboard.urls')),
-    path('recruitboard/', include('recruitboard.urls'))
+    path('recruitboard/', include('recruitboard.urls')),
+    path('goodplace/', include('place.urls')),
+    path('womenonly/', include('place.urls_women_only'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
