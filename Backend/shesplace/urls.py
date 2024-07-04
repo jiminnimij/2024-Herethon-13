@@ -19,5 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('freeboard/', include('freeboard.urls'))
+    path('freeboard/', include('freeboard.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('accounts/', include('dj_rest_auth.urls')),
+    path('accounts/kakao/', include('api.urls')),
 ]
