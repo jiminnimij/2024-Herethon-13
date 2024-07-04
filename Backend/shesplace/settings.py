@@ -61,7 +61,7 @@ INSTALLED_APPS = [
 TOKEN_MODEL = None
 
 SOCIAL_AUTH_KAKAO_CLIENT_ID = "c46ab624868aee506356e4c765243e8a"
-# SOCIAL_AUTH_KAKAO_SECRET = "1100413"
+SOCIAL_AUTH_KAKAO_SECRET = "1100413"
 
 AUTH_USER_MODEL = 'api.CustomUser'
 
@@ -102,7 +102,7 @@ SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_LOGOUT_REDIRECT_URL = 'index'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_ON_GET = True 
 WSGI_APPLICATION = 'shesplace.wsgi.application'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드 사용 x
@@ -198,4 +198,64 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/mysite.log',
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
 }
