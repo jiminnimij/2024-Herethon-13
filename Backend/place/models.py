@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-
 
 # Create your models here.
 User = get_user_model()
@@ -46,3 +44,8 @@ class WomenOnlyPlace(models.Model):
     ]
 
     women_only_category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, blank=True)
+
+class Scrap(models.Model):
+    scrap_place = models.ForeignKey(to=Place, on_delete=models.CASCADE, null=True, blank=True, related_name='scrap_place')
+    scrap_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='스크랩한 유저', null=True, blank=True)
+
