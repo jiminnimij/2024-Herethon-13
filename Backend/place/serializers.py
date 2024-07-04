@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from .models import Review, Place, WomenOnlyPlace, Scrap
 
@@ -13,7 +14,7 @@ class WomenOnlyPlaceSerializer(ModelSerializer):
         fields = '__all__'
 
 class PlaceSerializer(ModelSerializer):
-    # review_rate_average 
+    average_review_rate = serializers.FloatField(read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True, source='review_set')
     women_only_category = WomenOnlyPlaceSerializer(many=True, read_only=True, source='women_only_places')
 
