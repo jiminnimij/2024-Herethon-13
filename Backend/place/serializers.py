@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Review, Place, WomenOnlyPlace
+from .models import Review, Place, WomenOnlyPlace, Scrap
 
 
 class ReviewSerializer(ModelSerializer):
@@ -21,5 +21,8 @@ class PlaceSerializer(ModelSerializer):
         model = Place
         fields = '__all__'
 
-
+class ScrapSerializer(ModelSerializer):
+    class Meta:
+        model = Scrap
+        fields = '__all__'
 
