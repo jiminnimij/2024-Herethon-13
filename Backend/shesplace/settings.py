@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     # DRF
     'rest_framework',
 
+    # filter
+    'django_filters',
+
     # internal APP
     'freeboard',
     'recruitboard',
