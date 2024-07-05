@@ -22,7 +22,7 @@ class Place(models.Model):
     
 class Review(models.Model):
     # 기본 User 참조. 후에 커스텀 User로 변경 필요
-    review_writer_id = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='작성자', null=True, blank=True)
+    review_writer_id = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, verbose_name='작성자', null=True, blank=True)
     review_content = models.TextField(verbose_name='리뷰 내용')
     review_place_id = models.ForeignKey(to=Place, on_delete=models.CASCADE, verbose_name='리뷰가 달린 장소 id', null=True, blank=True)
     review_rate = models.IntegerField(verbose_name='별점')
