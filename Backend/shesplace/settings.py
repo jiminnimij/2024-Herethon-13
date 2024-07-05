@@ -44,10 +44,6 @@ INSTALLED_APPS = [
     # DRF
     'rest_framework',
 
-    # filter
-    'django_filters',
-
-    # internal APP
     'rest_framework_simplejwt',
     'freeboard',
     'api',
@@ -57,10 +53,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
     'rest_framework.authtoken',
+    'place',
+
 
     # internal APP
     'recruitboard',
-    'place'
+    # 'django-filter',
 
 ]
 TOKEN_MODEL = None
@@ -72,8 +70,8 @@ AUTH_USER_MODEL = 'api.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-
     'allauth.account.auth_backends.AuthenticationBackend',
+    'rest_framework.permissions.IsAuthenticated',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -106,7 +104,7 @@ TEMPLATES = [
 SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/account/kakao/profile'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_ON_GET = True 
 WSGI_APPLICATION = 'shesplace.wsgi.application'
@@ -175,8 +173,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
     'rest_framework.permissions.IsAuthenticated',
+    
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
