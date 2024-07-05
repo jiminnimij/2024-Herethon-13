@@ -35,10 +35,23 @@ def kakao_login(request):
 def kakao_callback(request):
     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
     code = request.GET.get("code")
+    data = {'grant_type': "authorization_code", 'client_id': client_id,
+            'redirect_uri': KAKAO_CALLBACK_URI,
+            'code': code}
+    headers = {'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'}
+    token_response = requests.post('https://kauth.kakao.com/oauth/token', data = data, headers = headers)
+    access_token = token_response.json().get('access_token')
 
+    headers = {"Authorization": f'Bearer {access_token}'}
+    token_validate_response = requests.get('https://kapi.kakao.com/v1/user/access_token_info', headers = headers)
+    print(token_validate_response.json())
+
+    headers = {"Authorization": f'Bearer {access_token}', 'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'}
+    user_info_response = requests.post('https://kapi.kakao.com/v2/user/me', headers = headers)
+    print(user_info_response.json())
     # code로 access token 요청
-    token_request = requests.get(f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&code={code}")
-    token_response_json = token_request.json()
+
+    token_response_json = token_response.json()
 
     # 에러 발생 시 중단
     error = token_response_json.get("error", None)
@@ -110,8 +123,30 @@ class KakaoLogin(SocialLoginView):
     callback_url = KAKAO_CALLBACK_URI
     client_class = OAuth2Client
 
+# def kakao_logout(request):
+#     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
+#     LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/'
+#     access_token = request.session.get('access_token')
+
+#     if not access_token:
+#         return JsonResponse({'err_msg': 'Access token not found'}, status=400)
+    
+#     headers = {"Authorization": f'Bearer {access_token}'}
+    
+#     logout_response = requests.post('https://kapi.kakao.com/v1/user/logout', headers=headers)
+#     if logout_response.status_code != 200:
+#         return JsonResponse({'err_  msg': 'Failed to logout from Kakao'}, status=logout_response.status_code)
+    
+#     logout_redirect_response = requests.get(f'https://kauth.kakao.com/oauth/logout?client_id={client_id}&logout_redirect_uri={LOGOUT_REDIRECT_URI}')
+#     if logout_redirect_response.status_code != 200:
+#         return JsonResponse({'err_msg': 'Failed to redirect after logout'}, status=logout_redirect_response.status_code)
+
+#     return JsonResponse({'msg': 'Successfully logged out'}, status=200)
+
+
 class Profile(ModelViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     queryset=CustomUser.objects.all()
     serializer_class=UserSerializer
+
