@@ -147,6 +147,8 @@ class KakaoLogin(SocialLoginView):
 class Profile(ModelViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    queryset=CustomUser.objects.all()
-    serializer_class=UserSerializer
+    serializer_class = UserSerializer
+    def get_queryset(self):
+        user = self.request.user  # Get the logged-in usere
+        return CustomUser.objects.filter(email=user.email)
 
