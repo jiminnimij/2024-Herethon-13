@@ -22,6 +22,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/login"
 
 def kakao_login(request):
     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
-    return redirect(f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&scope=account_email")
+    return redirect(f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&scope=account_email,gender")
 
 def kakao_callback(request):
     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
@@ -59,19 +60,31 @@ def kakao_callback(request):
         raise JSONDecodeError(error)
 
     access_token = token_response_json.get("access_token")
-
-    profile_request = requests.post(
+    #여기 post를 get으로 수정
+    profile_request = requests.get(
         "https://kapi.kakao.com/v2/user/me",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     profile_json = profile_request.json()
+    # return JsonResponse({"profile_json":profile_json})
+    kakao_oid = profile_json['id']
+    nickname = profile_json['kakao_account']['profile']
+    email = profile_json['kakao_account']['email']
+    gender = profile_json['kakao_account']['gender']
+    age_range = profile_json['kakao_account']['age_range'] 
+    profile_image = profile_json['kakao_account']['profile']['profile_image_url']
 
-    kakao_account = profile_json.get("kakao_account")
-    email = kakao_account.get("email", None) # 이메일!
-
+    # kakao_account = profile_json.get('kakao_account')
+    # kakao_kakao_account = kakao_account.get('kakao_account')
+    # email = kakao_account.get("email", None) # 이메일!
+    # kakao_oid = profile_json.get('id')
+    # gender = kakao_account.get("gender", None)
+    # age_range = kakao_account.get("age_range", None)
+    # profile_image = kakao_kakao_account.get("profile_image", None)
+    # nickname = kakao_kakao_account.get("nickname", None)
+    
     if email is None:
         return JsonResponse({'err_msg': 'failed to get email'}, status=status.HTTP_400_BAD_REQUEST)
-    
     try:
         user = CustomUser.object.get(email=email)
         social_user = SocialAccount.objects.get(user=user)
@@ -89,20 +102,28 @@ def kakao_callback(request):
 
     except CustomUser.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
-        user_data = {
-            'email': email,
-            'gender': kakao_account.get("gender"),
-            'age_range': kakao_account.get("age_range"),
-            'profile_image': kakao_account["profile"].get("profile_image_url"),
-            'nickname': kakao_account["profile"].get("nickname"),
-            'kakao_oid': profile_json.get("id"),
-        }
-        serializer = UserSerializer(data=user_data)
         
-        if serializer.is_valid():
-            user = serializer.save()
-        else:
-            return JsonResponse({'err_msg': 'failed to save user data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        user_data = {
+            "email" : email,
+            "kakao_oid" : kakao_oid,
+            "gender" : gender,
+            "age_range" : age_range,
+            "profile_image" : profile_image,
+            "nickname" : nickname
+        }
+        print(user_data)
+        user = CustomUser.objects.create(
+            kakao_oid=kakao_oid,
+            email=email,
+            nickname=nickname,
+            gender=gender,
+            age_range=age_range,
+            profile_image=profile_image
+        )
+        # if user.is_valid():
+        #     user.save()
+        #else:
+        #    return JsonResponse({'err_msg': 'failed to save user data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
         data = {'access_token': access_token, 'code': code}
@@ -145,10 +166,25 @@ class KakaoLogin(SocialLoginView):
 
 
 class Profile(ModelViewSet):
+    # def get(request):
+    #     profile_request = requests.get(
+    #     "https://kapi.kakao.com/v2/user/me",
+    #     headers={"Authorization": f"Bearer {access_token}"},
+    # )
+    #        profile_json = profile_request.json()
+    #     return JsonResponse({"profile_json":profile_json})
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = UserSerializer
     def get_queryset(self):
         user = self.request.user  # Get the logged-in usere
         return CustomUser.objects.filter(email=user.email)
+    # queryset = CustomUser.objects.all()
+    
+
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['email']
+
+    # filter_backends = [DjangoFilterBackend] 
+    # filterset_fields = ['email']
 
