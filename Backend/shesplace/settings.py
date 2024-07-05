@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-+g+dhi)b&^+-*e*+zi5n-^q%aql3+&+z2_8o$!6p333obx^-74
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+KAKAO_CALLBACK_URI ='http://127.0.0.1:8000/accounts/kakao/login/callback/'
 
 
 # Application definition
@@ -42,11 +44,32 @@ INSTALLED_APPS = [
     # DRF
     'rest_framework',
 
-    # internal APP
+    'rest_framework_simplejwt',
     'freeboard',
-    'recruitboard',
-]
+    'api',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
+    'rest_framework.authtoken',
 
+    # internal APP
+    'recruitboard',
+
+]
+TOKEN_MODEL = None
+
+SOCIAL_AUTH_KAKAO_CLIENT_ID = "c46ab624868aee506356e4c765243e8a"
+SOCIAL_AUTH_KAKAO_SECRET = "LPrFegF5QT1vgrlI2Li0b20zlJONhoLI"
+
+AUTH_USER_MODEL = 'api.CustomUser'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'shesplace.urls'
@@ -74,9 +98,17 @@ TEMPLATES = [
         },
     },
 ]
+SITE_ID = 1
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_ON_GET = True 
 WSGI_APPLICATION = 'shesplace.wsgi.application'
-
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None # username 필드 사용 x
+ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
+ACCOUNT_USERNAME_REQUIRED = False        # username 필드 사용 x
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -89,6 +121,9 @@ DATABASES = {
 }
 
 
+# .env
+# SOCIAL_AUTH_KAKAO_CLIENT_ID = "c46ab624868aee506356e4c765243e8a"
+# SOCIAL_AUTH_KAKAO_SECRET = "LPrFegF5QT1vgrlI2Li0b20zlJONhoLI"
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -131,3 +166,96 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+    'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "accounts.serializers.CustomUserRegisterSerializer"
+}
+
+REST_AUTH = {
+    'USE_JWT' : True,
+    'JWT_AUTH_COOKIE' : 'access',
+    'JWT_AUTH_HTTPONLY': True,
+    'JWT_AUTH_REFRESH_COOKIE' : "refresh_token",
+    'JWT_AUTH_SAMESITE': 'Lax',
+    'JWT_AUTH_COOKIE_USE_CSRF' : False,
+    'SESSION_LOGIN' : False
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/mysite.log',
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
+}
