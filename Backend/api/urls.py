@@ -6,8 +6,9 @@ from rest_framework import routers
 app_name = 'accounts/kakao/'
 
 urlpatterns = [
-    path('accounts/kakao/login/', kakao_login, name='kakao_login'),
-    path('accounts/kakao/callback/', kakao_callback, name='kakao_callback'),
-    path('accounts/kakao/login/finish/', KakaoLogin.as_view(), name='kakao_login_todjango'),
+    path('login/', kakao_login, name='kakao_login'),
+    path('callback/', kakao_callback, name='kakao_callback'),
+    path('login/finish/', KakaoLogin.as_view(), name='kakao_login_todjango'),
+    path('profile/', Profile.as_view(), name = "kakao_profile")
     
 ]

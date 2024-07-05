@@ -23,4 +23,10 @@ class FreeboardPostModelViewSet(ModelViewSet):
 # 자유게시판 댓글 뷰셋
 class FreeboardPostCommentModelViewSet(ModelViewSet):
     queryset=FreeboardPostComment.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    queryset=FreeboardPostComment.objects.all()
     serializer_class=FreeboardPostCommentModelSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
+

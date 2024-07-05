@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 # Create your models here.
-User = get_user_model()
-
+# User = get_user_model()
+from api.models import CustomUser
 # Create your models here.
 
 class Place(models.Model):
@@ -47,5 +47,5 @@ class WomenOnlyPlace(models.Model):
 
 class Scrap(models.Model):
     scrap_place = models.ForeignKey(to=Place, on_delete=models.CASCADE, null=True, blank=True, related_name='scrap_place')
-    scrap_user_id = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='스크랩한 유저', null=True, blank=True)
+    scrap_user_id = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, verbose_name='스크랩한 유저', null=True, blank=True)
 
