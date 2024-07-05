@@ -112,7 +112,7 @@
 .inputcontent {
   outline: none;
   width: 90%;
-  height: 10vh;
+  height: 7vh;
   margin-left: 7px;
   margin-top: -4px;
   border-radius: 5px;
@@ -135,53 +135,53 @@
   gap: 15px;
 }
 
-.image{
-    cursor: pointer;
+.image {
+  cursor: pointer;
 }
 
-.image1{
-    cursor: pointer;
+.image1 {
+  cursor: pointer;
 }
 
-.image2{
-    cursor: pointer;
-    margin-top: 20px;
-    margin-left:-25px;
+.image2 {
+  cursor: pointer;
+  margin-top: 20px;
+  margin-left: -25px;
 }
 
-.moveh2{
-    position:absolute;
-    margin-top: 160px;
-    margin-left: 20px;
+.moveh2 {
+  position: absolute;
+  margin-top: 160px;
+  margin-left: 20px;
 }
 
-.movh2{
-    position:absolute;
-    margin-top: 30px;
-    margin-left: 20px;
+.movh2 {
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 20px;
 }
 
 .main2 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 90%;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin-left: 15px;
-    margin-top: 55px;
-    gap: 0px;
-  }
-
-.bar{
-    position: sticky;
-    width: 345px;
-    height: 50px;
-    background-color: white;
-    opacity: 0.96;
-    margin-top: -60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 90%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-left: 15px;
+  margin-top: 55px;
+  gap: 0px;
 }
 
-.button{
-    cursor: pointer;
+.bar {
+  position: sticky;
+  width: 345px;
+  height: 50px;
+  background-color: white;
+  opacity: 0.96;
+  margin-top: -60px;
+}
+
+.button {
+  cursor: pointer;
 }

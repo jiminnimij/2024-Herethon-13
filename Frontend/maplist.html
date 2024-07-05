@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="container">
-  <div id="map" style="width:100%;height:350px;"></div>
+  <div id="map" style="width:375px; height:600px;"></div>
   <div id="container_2">
     <div id="top">
       <div id="top_text">
@@ -78,6 +78,16 @@
       <a href="filter.html" id="plus">
         <img src="img/plus.png" alt="plus">
       </a>
+      <div class="bar">
+        <img class="button" src="img/Tab 1.svg" onclick="goToGood()" alt="button" />
+        <!-- onclick="goToGood()" -->
+        <img class="button" src="img/Tab 2.svg" onclick="goToMap()" alt="button" />
+
+        <img class="button" src="img/Tab 4.svg" alt="button" />
+        <!-- onclick="goToCommunity()" -->
+        <img class="button" src="img/Tab 5.svg" alt="button" />
+        <!-- onclick="goToMy()" -->
+      </div>
     </div>
   </div>
 </div>
@@ -147,5 +157,6 @@
     markers = [];
   }
 </script>
+<script src="js/maplist.js"></script>
 </body>
 </html>
