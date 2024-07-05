@@ -17,7 +17,7 @@ class FreeboardPostModelViewSet(ModelViewSet):
     serializer_class=FreeboardPostModelSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user = self.request.user)
+        serializer.save(free_post_writer_id = self.request.user)
         
 
 # 자유게시판 댓글 뷰셋
@@ -28,5 +28,5 @@ class FreeboardPostCommentModelViewSet(ModelViewSet):
     serializer_class=FreeboardPostCommentModelSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user = self.request.user)
+        serializer.save(free_comment_writer_id = self.request.user)
 
