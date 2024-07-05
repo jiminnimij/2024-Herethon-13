@@ -91,7 +91,7 @@ def kakao_callback(request):
 
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
-        accept_status = accept.status_code  
+        accept_status = accept.status_code
 
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
@@ -102,6 +102,7 @@ def kakao_callback(request):
 
     except CustomUser.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
+
         
         user_data = {
             "email" : email,
