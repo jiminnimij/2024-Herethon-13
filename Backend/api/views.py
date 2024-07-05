@@ -78,7 +78,7 @@ def kakao_callback(request):
 
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
-        accept_status = accept.status_code  
+        accept_status = accept.status_code
 
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
@@ -97,6 +97,8 @@ def kakao_callback(request):
             'nickname': kakao_account["profile"].get("nickname"),
             'kakao_oid': profile_json.get("id"),
         }
+
+
         serializer = UserSerializer(data=user_data)
         
         if serializer.is_valid():

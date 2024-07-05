@@ -3,7 +3,7 @@ from rest_framework.routers import SimpleRouter
 from .views import WomenOnlyPlaceViewSet
 
 # 기본 라우터 설정
-app_name = 'women-only'
+app_name = 'womenonly'
 router = SimpleRouter()
 
 # 장소 ViewSet url 연결
