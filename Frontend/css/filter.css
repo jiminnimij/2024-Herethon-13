@@ -1,0 +1,190 @@
+div,
+nav,
+aside,
+article,
+figure,
+h1,
+h2,
+h3,
+span,
+p {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: #292929;
+}
+
+* {
+  font-family: "Apple SD Gothic Neo", "맑은 고딕", "돋움", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  position: absolute;
+  border: solid 1px #9d9d9d;
+  border-radius: 12px;
+  top: 70%;
+  left: 50%;
+  width: 375px;
+  height: 812px;
+  transform: translate(-50%, -50%);
+  color: #292929;
+  overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
+}
+/* 스크롤바 없애기 */
+#container::-webkit-scrollbar {
+  display: none;
+}
+#top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white; /* 배경을 추가하여 뒤의 콘텐츠 가림 */
+  z-index: 1000; /* 다른 콘텐츠 위에 있도록 설정 */
+}
+#top_text {
+  width: 370px;
+  height: auto;
+  text-align: left;
+  padding: 25px 25px;
+}
+
+#top_text > p {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9d9d9d;
+}
+
+#selectbar {
+  width: 100%;
+  height: 50px;
+  margin: 10px 0;
+  display: flex;
+  overflow: scroll;
+}
+
+/* Button */
+#bar_button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+/* 스크롤바 없애기 */
+#selectbar::-webkit-scrollbar {
+  display: none;
+}
+
+#bar_button2 {
+  box-sizing: border-box;
+  position: relative;
+  width: 67px;
+  height: 36px;
+  border: 1px solid #63007f;
+  border-radius: 30px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+#bar_button2 > span {
+  align-content: center;
+  color: #63007f;
+  /* font-weight: bold; */
+  text-align: center;
+  margin-top: 8px;
+}
+
+#container_list {
+  padding-top: 200px;
+  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden; /* 수평 넘침 방지 */
+  height: calc(100% - 150px); /* 고정된 상단 섹션의 높이를 제외한 나머지 높이를 차지 */
+}
+
+/* 스크롤바 없애기 */
+#container_list::-webkit-scrollbar {
+  display: none;
+}
+article.list {
+  /* margin-bottom: -1px; */
+  box-sizing: border-box;
+  border: 1px solid #e3e3e3;
+  background-color: #fff;
+  width: 375px;
+}
+
+.imgflex {
+  display: flex;
+}
+
+.preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview > img {
+  width: 100px;
+  height: 100px;
+  margin-left: 15px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+div.article {
+  padding: 16px 16px;
+  justify-content: space-between;
+  align-content: center;
+}
+
+div.bold {
+  line-height: 20px;
+  font-size: 16px;
+  color: #292929;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+
+/* 별점 */
+#star {
+  display: flex;
+  font-size: 14px;
+}
+
+#img_info > span {
+  font-size: 14px;
+  color: #444444;
+  line-height: 20px;
+  max-height: 100px;
+}
+
+div.article > div.slist > li {
+  font-size: 12px;
+  color: #666;
+  letter-spacing: -0.5px;
+  list-style: none;
+}
+
+/* img + 시설정보 묶음 */
+#img_info {
+  display: flex;
+  margin-top: 4px;
+}
+
+#img_info > img {
+  margin-right: 3px;
+  width: 14px;
+  height: 100%;
+}
+
+/* 지도 */
+#daumRoughmapContainer1719949556303 {
+  width: 300px;
+  height: auto;
+}

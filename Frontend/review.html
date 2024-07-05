@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="stylesheet" href="../css/review.css" />
+  </head>
+  <body>
+    <div id="root">
+      <div class="box">
+        <header>
+            <img class="back2" onclick="goBack()" src="/img/back2.svg" alt="back" />
+            <h3 class="h3">리뷰 남기기</h3>
+        </header>
+        <main class="image">
+            <img src="/img/pic.svg" alt="detail" />
+        </main>
+        <h3 class="reviewtext">[여의도 이크루즈]</h3>
+        <main class="write">
+            <img class="star" src="/img/star.svg" alt="detail" />
+            <input
+            class="inputcontent"
+            type="text"
+            id="secondInputId"
+            placeholder="리뷰를 작성해 주세요!"
+          />
+          </ul>
+        </main>
+        <bottom>
+          <div class="location1" onclick="goBack()">취소</div>
+          <div class="location2" onclick="goReview()">완료</div>
+        </bottom>
+      </div>
+    </div>
+    <script src="../js/review.js"></script>
+  </body>
+</html>
