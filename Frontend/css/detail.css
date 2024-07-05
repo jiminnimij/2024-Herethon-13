@@ -29,7 +29,7 @@
 }
 
 .reviewtext{
-    margin-top: 50px;
+    margin-top: 10px;
     margin-left: 30px;
 }
 
@@ -38,12 +38,67 @@
   width: 100%;
 }
 
-.reviewbox{
-  height: 90px;
+.main1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 90%;
-  background-color: blue;
-
+  max-height: 200px; 
+  overflow-y: auto;
+  scrollbar-width: none; 
+  margin-left: 18px;
+  margin-top: -10px;
+  gap: 15px;
 }
+
+.main1::-webkit-scrollbar {
+  display: none; 
+}
+
+.reviewbox {
+  width: 100%; 
+  min-height: 150px; 
+  height: auto;
+  max-height: 300px;
+  background-color: #f2e8f5;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.large-text {
+  position: absolute;
+  top: -27px;
+  left: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.large-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 430%; 
+  border-bottom: 1.5px solid #D9D9D9; 
+}
+
+.small-text {
+  position: relative;
+  top: 30px;
+  font-size: 13px;
+  color: #8E8E8E;
+  margin-top: 10px; 
+}
+
+.top-section {
+  position: relative; 
+}
+
+.middle-section {
+  position: relative; 
+}
+
 
 .location {
   position: absolute;
@@ -61,21 +116,4 @@
   cursor: pointer;
 }
 
-.main1 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  height: 120px; /* 높이를 설정하여 스크롤 가능하도록 함 */
-  overflow-y: auto; /* 세로 스크롤 가능 */
-  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
-  margin-left: 18px;
-  margin-top: -10px;
-  gap: 15px;
-}
-
-/* 웹킷 브라우저에서 스크롤바 숨기기 */
-.main1::-webkit-scrollbar {
-  display: none;
-}
 

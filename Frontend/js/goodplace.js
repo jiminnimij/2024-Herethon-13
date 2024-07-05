@@ -3,7 +3,7 @@ function goToDetail() {
 }
 
 function goToGood() {
-  window.location.href = "detail.html";
+  window.location.href = "goodplace.html";
 }
 
 function goToMap() {
@@ -11,9 +11,9 @@ function goToMap() {
 }
 
 function goToCommunityl() {
-  window.location.href = "detail.html";
+  window.location.href = "Community.html";
 }
 
 function goToMy() {
-  window.location.href = "detail.html";
+  window.location.href = "Mypage.html";
 }
