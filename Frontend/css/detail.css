@@ -1,0 +1,81 @@
+.root {
+  display: block;
+  unicode-bidi: isolate;
+}
+
+.box {
+  position: relative;
+  margin: 0 auto;
+  width: 375px;
+  height: 812px;
+  background: white;
+}
+
+.back{
+    position: absolute;
+    margin-top: 32px;
+    margin-left: -325px;
+    cursor: pointer;
+}
+
+.movecr{
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.explain{
+    margin-top: -20px;
+    margin-left: 20px;
+}
+
+.reviewtext{
+    margin-top: 50px;
+    margin-left: 30px;
+}
+
+.review{
+  height: 100px;
+  width: 100%;
+}
+
+.reviewbox{
+  height: 90px;
+  width: 90%;
+  background-color: blue;
+
+}
+
+.location {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 90%;
+  margin-left: 20px;
+  margin-top: 10px;
+  border-radius: 20px;
+  border: none;
+  background-color: #f2e8f5;
+  color: #5A0D7A;
+  cursor: pointer;
+}
+
+.main1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 120px; /* 높이를 설정하여 스크롤 가능하도록 함 */
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+  margin-left: 18px;
+  margin-top: -10px;
+  gap: 15px;
+}
+
+/* 웹킷 브라우저에서 스크롤바 숨기기 */
+.main1::-webkit-scrollbar {
+  display: none;
+}
+
