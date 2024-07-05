@@ -53,9 +53,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
     'rest_framework.authtoken',
+    'place',
+
 
     # internal APP
     'recruitboard',
+    # 'django-filter',
 
 ]
 TOKEN_MODEL = None
@@ -67,8 +70,8 @@ AUTH_USER_MODEL = 'api.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-
     'allauth.account.auth_backends.AuthenticationBackend',
+    'rest_framework.permissions.IsAuthenticated',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
