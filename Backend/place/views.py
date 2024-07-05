@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
 
+
 from .models import Review, Place, WomenOnlyPlace, Scrap
 from .serializers import ReviewSerializer, PlaceSerializer, WomenOnlyPlaceSerializer, ScrapSerializer
 

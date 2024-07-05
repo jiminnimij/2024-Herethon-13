@@ -43,22 +43,21 @@ INSTALLED_APPS = [
 
     # DRF
     'rest_framework',
-
+    'django_filters',
     'rest_framework_simplejwt',
-    'freeboard',
-    'api',
+    'rest_framework.authtoken',
+
+
+    # internal APP
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
-    'rest_framework.authtoken',
     'place',
-
-
-    # internal APP
+    'freeboard',
+    'api',
     'recruitboard',
-    # 'django-filter',
 
 ]
 TOKEN_MODEL = None
@@ -180,6 +179,7 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
