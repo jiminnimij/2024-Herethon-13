@@ -23,29 +23,30 @@ a {
 }
 
 #container {
-  position: absolute;
-  border: solid 1px #9d9d9d;
-  border-radius: 12px;
-  top: 70%;
-  left: 50%;
+  position: relative;
+  margin: 0 auto;
   width: 375px;
   height: 812px;
-  transform: translate(-50%, -50%);
+  background: white;
+  border: solid 1px white;
+  border-radius: 12px;
   color: #292929;
   overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
 }
-/* 스크롤바 없애기 */
-#container::-webkit-scrollbar {
-  display: none;
-}
 #top {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   background: white; /* 배경을 추가하여 뒤의 콘텐츠 가림 */
   z-index: 1000; /* 다른 콘텐츠 위에 있도록 설정 */
 }
+
+/* 스크롤바 없애기 */
+#container::-webkit-scrollbar {
+  display: none;
+}
+
 #top_text {
   width: 370px;
   height: auto;
@@ -78,6 +79,20 @@ a {
   display: none;
 }
 
+#bar_button2:hover {
+  border-radius: 20px;
+  border: none;
+  color: #63007f;
+  border: 1px solid #63007f;
+  background-color: #f2e8f5;
+}
+
+#bar_button2:active {
+  color: white;
+  background-color: #63007f;
+  border: 1px solid #63007f;
+}
+
 #bar_button2 {
   box-sizing: border-box;
   position: relative;
@@ -87,6 +102,7 @@ a {
   border-radius: 30px;
   font-size: 14px;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 #bar_button2 > span {
