@@ -24,32 +24,24 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 import logging
 logger = logging.getLogger(__name__)
-KAKAO_CALLBACK_URI = "http://127.0.0.1:8000"
-def kakao_login(request):
-    rest_api_key = getattr(settings, '')
-    return redirect(
-        f"https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
-    )
 
+BASE_URL = "http://127.0.0.1:8000/"
+KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/login"
+
+def kakao_login(request):
+    client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
+    return redirect(f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&scope=account_email")
 
 def kakao_callback(request):
     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
     code = request.GET.get("code")
-    data = {
-        "grant_type":"authorization_code",
-        "client_id": client_id,
-        "secret_key": os.environ.get("SOCIAL_AUTH_KAKAO_SECRET"),
-        "redirection_url" :KAKAO_CALLBACK_URI,
-        "code":code
-    }
-    kakao_token_api = "https://kauth.kakao.com/oauth/token"
-    access_token = request.post(kakao_token_api, data=data).json()["access_token"]
+
     # code로 access token 요청
     token_request = requests.get(f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={KAKAO_CALLBACK_URI}&code={code}")
     token_response_json = token_request.json()
 
     # 에러 발생 시 중단
-    error = token_response_json.get("error")
+    error = token_response_json.get("error", None)
     if error is not None:
         raise JSONDecodeError(error)
 
@@ -59,82 +51,59 @@ def kakao_callback(request):
         "https://kapi.kakao.com/v2/user/me",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-
     profile_json = profile_request.json()
 
-    error = profile_json.get("error")
-    if error is not None:
-        raise JSONDecodeError(error)
-
     kakao_account = profile_json.get("kakao_account")
-    email = kakao_account.get("email")
-    kakao_oid = profile_json.get("id")
+    email = kakao_account.get("email", None) # 이메일!
 
-    gender = kakao_account.get("gender")
-
-    nickname = kakao_account["profile"]["nickname"]
-
-    profile_image = kakao_account["profile"]["profile_image_url"]
-
-    age_range = kakao_account.get("age_range")
-
+    if email is None:
+        return JsonResponse({'err_msg': 'failed to get email'}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
-        data = {"access_token": access_token, "code": code}
-        accept = requests.post(f"http://127.0.0.1:8000/accounts/kakao/login/finish/", data=data)
-        accept_status = accept.status_code
+        user = CustomUser.object.get(email=email)
+        social_user = SocialAccount.objects.get(user=user)
+
+        data = {'access_token': access_token, 'code': code}
+        accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
+        accept_status = accept.status_code  
+
         if accept_status != 200:
-            return JsonResponse({"err_msg": "failed to signin"}, status=accept_status)
+            return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
+
         accept_json = accept.json()
-        # refresh_token을 headers 문자열에서 추출함
-        refresh_token = accept.headers['Set-Cookie']
-        refresh_token = refresh_token.replace('=',';').replace(',',';').split(';')
-        token_index = refresh_token.index(' refresh_token')
-        cookie_max_age = 3600 * 24 * 14 # 14 days
-        refresh_token = refresh_token[token_index+1]
-        accept_json.pop("user", None)
-        response_cookie = JsonResponse(accept_json)
-        response_cookie.set_cookie('refresh_token', refresh_token, max_age=cookie_max_age, httponly=True, samesite='Lax')
-        return response_cookie
+        accept_json.pop('user', None)
+        return JsonResponse(accept_json)
 
     except CustomUser.DoesNotExist:
-        # 기존에 가입된 유저가 없으면 새로 가입
-        data = {"access_token": access_token, "code": code}
-        accept = requests.post(f"http://127.0.0.1:8000/accounts/kakao/login/finish/", data=data)
+        # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
+        user_data = {
+            'email': email,
+            'gender': kakao_account.get("gender"),
+            'age_range': kakao_account.get("age_range"),
+            'profile_image': kakao_account["profile"].get("profile_image_url"),
+            'nickname': kakao_account["profile"].get("nickname"),
+            'kakao_oid': profile_json.get("id"),
+        }
+        serializer = UserSerializer(data=user_data)
+        
+        if serializer.is_valid():
+            user = serializer.save()
+        else:
+            return JsonResponse({'err_msg': 'failed to save user data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        data = {'access_token': access_token, 'code': code}
+        accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
         accept_status = accept.status_code
+
+        # 뭔가 중간에 문제가 생기면 에러
         if accept_status != 200:
-            return JsonResponse({"err_msg": "failed to signup"}, status=accept_status)
-        # user의 pk, email, first name, last name과 Access Token, Refresh token 가져옴
-        user = CustomUser.objects.create(
-        email=email,
-        kakao_oid=kakao_oid,
-        gender=gender,
-        nickname=nickname,
-        profile_image=profile_image,
-        age_range=age_range
-        )
+            return JsonResponse({'err_msg': 'failed to signup'}, status=accept_status)
+
         accept_json = accept.json()
-        # refresh_token을 headers 문자열에서 추출함
-        refresh_token = accept.headers['Set-Cookie']
-        refresh_token = refresh_token.replace('=',';').replace(',',';').split(';')
-        token_index = refresh_token.index(' refresh_token')
-        refresh_token = refresh_token[token_index+1]
-
-        accept_json.pop("user", None)
-        response_cookie = JsonResponse(accept_json)
-        response_cookie.set_cookie('refresh_token', refresh_token, max_age=cookie_max_age, httponly=True, samesite='Lax')
-        return response_cookie
-
-    #이메일 없으면 오류 => 카카오톡 최신 버전에서는 이메일 없이 가입 가능해서 추후 수정해야함
-
-
-
-    # user, created = CustomUser.objects.get_or_create(email=email)
-
-
-
-    # user.save()
-
-    return JsonResponse({'message': 'Kakao login success', 'access_token': access_token}, status=status.HTTP_200_OK)
+        accept_json.pop('user', None)
+        return JsonResponse(accept_json)
+    
 
 class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
