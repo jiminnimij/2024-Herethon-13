@@ -1,3 +1,4 @@
+import random
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 # Create your models here.
@@ -17,17 +18,26 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+
     email = models.EmailField(unique=True)
 
     kakao_oid = models.BigIntegerField(
         null=True, unique=True, blank=False
     )  # 카카오 user_id
-    nickname = models.CharField(max_length=100, unique=False, null=True)
+    
     gender = models.CharField(max_length=100)
     age_range = models.CharField(max_length=100, null=True, blank=True)
     # position = models.CharField(max_length=100, null=True, blank=True)
-    profile_image = models.URLField(max_length=200, blank=True, null=True)
+    profile_image = models.URLField(max_length=200, default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMO6VQCqNMCRlC6jtWeS8xDW9LwyFhhjuiCQ&s", null=True)
+    defaultname = "USER"
 
+# 랜덤 넘버 생성 (예: 1부터 100 사이의 랜덤 정수)
+    random_number = random.randint(1, 100)
+
+# 기본 이름에 랜덤 넘버 추가
+    defaultname_with_random = f"{defaultname}{random_number}" 
+    nickname = models.CharField(max_length=100, unique=False, null=True, default=defaultname_with_random)
+    
     is_staff = models.BooleanField(default=False)  # 슈퍼유저 권한
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)  # 계정 활성화 상태
