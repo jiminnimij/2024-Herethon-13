@@ -188,14 +188,7 @@ def kakao_callback(request):
     age_range = profile_json['kakao_account']['age_range'] 
     profile_image = profile_json['kakao_account']['profile']['profile_image_url']
 
-    # kakao_account = profile_json.get('kakao_account')
-    # kakao_kakao_account = kakao_account.get('kakao_account')
-    # email = kakao_account.get("email", None) # 이메일!
-    # kakao_oid = profile_json.get('id')
-    # gender = kakao_account.get("gender", None)
-    # age_range = kakao_account.get("age_range", None)
-    # profile_image = kakao_kakao_account.get("profile_image", None)
-    # nickname = kakao_kakao_account.get("nickname", None)
+
     
     if email is None:
         return JsonResponse({'err_msg': 'failed to get email'}, status=status.HTTP_400_BAD_REQUEST)
@@ -235,17 +228,7 @@ def kakao_callback(request):
                 "age_range":f"{age_range}",
                 "gender":f"{gender}"
             }
-            # kakao_oid=kakao_oid,
-            # email=email,
-            # nickname=nickname,
-            # gender=gender,
-            # age_range=age_range,
-            # profile_image=profile_image
         )
-        # if user.is_valid():
-        #     user.save()
-        #else:
-        #    return JsonResponse({'err_msg': 'failed to save user data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
         data = {'access_token': access_token, 'code': code}
@@ -267,35 +250,8 @@ class KakaoLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
-# def kakao_logout(request):
-#     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
-#     LOGOUT_REDIRECT_URI = 'http://127.0.0.1:8000/'
-#     access_token = request.session.get('access_token')
-
-#     if not access_token:
-#         return JsonResponse({'err_msg': 'Access token not found'}, status=400)
-    
-#     headers = {"Authorization": f'Bearer {access_token}'}
-    
-#     logout_response = requests.post('https://kapi.kakao.com/v1/user/logout', headers=headers)
-#     if logout_response.status_code != 200:
-#         return JsonResponse({'err_  msg': 'Failed to logout from Kakao'}, status=logout_response.status_code)
-    
-#     logout_redirect_response = requests.get(f'https://kauth.kakao.com/oauth/logout?client_id={client_id}&logout_redirect_uri={LOGOUT_REDIRECT_URI}')
-#     if logout_redirect_response.status_code != 200:
-#         return JsonResponse({'err_msg': 'Failed to redirect after logout'}, status=logout_redirect_response.status_code)
-
-#     return JsonResponse({'msg': 'Successfully logged out'}, status=200)
-
-
 class Profile(ModelViewSet):
-    # def get(request):
-    #     profile_request = requests.get(
-    #     "https://kapi.kakao.com/v2/user/me",
-    #     headers={"Authorization": f"Bearer {access_token}"},
-    # )
-    #        profile_json = profile_request.json()
-    #     return JsonResponse({"profile_json":profile_json})
+
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = UserSerializer
@@ -303,26 +259,20 @@ class Profile(ModelViewSet):
         user = self.request.user  # Get the logged-in usere
         return CustomUser.objects.filter(email=user.email)
     
-    @action(detail=False, methods=['patch'], url_path='update-nickname')
-    def update_nickname(self, request, *args, **kwargs):
-        user = self.get_queryset().first()  # Get the first user object filtered by email
-        new_nickname = request.data.get('nickname')  # Assuming 'nickname' is in request data
+    # @action(detail=False, methods=['patch'], url_path='update-nickname')
+    # def update_nickname(self, request, *args, **kwargs):
+    #     user = self.get_queryset().first()  # Get the first user object filtered by email
+    #     new_nickname = request.data.get('nickname')  # Assuming 'nickname' is in request data
 
-        if new_nickname:
-            user.nickname = new_nickname
-            user.save()
-            serializer = self.get_serializer(user)
-            return Response(serializer.data)
-        else:
-            return Response({'error': 'Nickname field is required'}, status=status.HTTP_400_BAD_REQUEST)
+    #     if new_nickname:
+    #         user.nickname = new_nickname
+    #         user.save()
+    #         serializer = self.get_serializer(user)
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response({'error': 'Nickname field is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-    # queryset = CustomUser.objects.all()
-    
-
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ['email']
-
-    # filter_backends = [DjangoFilterBackend] 
-    # filterset_fields = ['email']
-
+    # def retrieve(self, request, *args, **kwargs):
+    #     user = self.request.user
+    #     serializer = self.get_serializer(user)
+    #     return Response(serializer.data)
