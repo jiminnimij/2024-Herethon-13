@@ -1,0 +1,158 @@
+div,
+nav,
+aside,
+article,
+figure,
+h1,
+h2,
+h3,
+span,
+p {
+  display: block;
+}
+
+input,
+button {
+  border: none;
+}
+
+* {
+  font-family: "Apple SD Gothic Neo", "맑은 고딕", "돋움", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+#map {
+  position: fixed;
+}
+
+#container {
+  position: absolute;
+  border: solid 1px #9d9d9d;
+  border-radius: 12px;
+  top: 70%;
+  left: 50%;
+  width: 375px;
+  height: 812px;
+  transform: translate(-50%, -50%);
+  color: #292929;
+  overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
+}
+/* 스크롤바 없애기 */
+#container::-webkit-scrollbar {
+  display: none;
+}
+
+#container_2 {
+  position: absolute;
+  border: solid 1px #9d9d9d;
+  border-radius: 12px;
+  top: 90%;
+  left: 50%;
+  width: 375px;
+  height: 812px;
+  transform: translate(-50%, -50%);
+  color: #292929;
+  overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
+}
+
+#top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white; /* 배경을 추가하여 뒤의 콘텐츠 가림 */
+  z-index: 1000; /* 다른 콘텐츠 위에 있도록 설정 */
+}
+
+#top_text {
+  width: 370px;
+  height: auto;
+  text-align: left;
+  padding: 25px 25px;
+}
+
+#top_text > p {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9d9d9d;
+}
+
+#selectbar {
+  width: 100%;
+  height: auto;
+  margin: 25px 25px 15px 25px;
+  display: block;
+}
+
+#selectbar > span {
+  font-size: 12px;
+  color: #9d9d9d;
+}
+
+#s_btn1,
+#s_btn2,
+#s_btn3,
+#s_btn4,
+#s_btn5,
+#s_btn6,
+#s_btn7,
+#s_btn8 {
+  display: flex;
+  margin-top: 25px;
+  position: relative;
+  width: 156px;
+  height: 40px;
+  box-sizing: border-box;
+  background-color: #f5f5f5;
+  /* justify-content: space-around; */
+}
+
+#s_btn1 > span,
+#s_btn2 > span,
+#s_btn3 > span,
+#s_btn4 > span,
+#s_btn5 > span,
+#s_btn6 > span,
+#s_btn7 > span,
+#s_btn8 > span,
+img {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: #1e1e1e;
+  margin: 10px;
+  width: 30px;
+  margin: 5px;
+}
+
+#s_btn1 > span,
+#s_btn2 > span,
+#s_btn3 > span,
+#s_btn4 > span,
+#s_btn5 > span,
+#s_btn6 > span,
+#s_btn7 > span,
+#s_btn8 > span {
+  width: 50px;
+  margin-top: 10px;
+}
+
+#btn_flex {
+  display: flex;
+}
+
+#select_btn {
+  margin-right: 15px;
+}
+
+#plus {
+  display: flex;
+  width: 30px;
+  float: right;
+  margin-right: 20px;
+}
+
+#plus > img {
+  width: 30px;
+  margin: 0;
+}
