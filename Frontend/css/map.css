@@ -18,19 +18,18 @@ p {
 }
 #map {
   position: fixed;
+  border: solid white;
+  border-radius: 12px;
 }
 
 #container {
-  position: absolute;
-  border: solid 1px #9d9d9d;
-  border-radius: 12px;
-  top: 70%;
-  left: 50%;
+  position: relative;
+  margin: 0 auto;
   width: 375px;
   height: 812px;
-  transform: translate(-50%, -50%);
-  color: #292929;
-  overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
+  background: white;
+  border: solid 1px white;
+  border-radius: 12px;
 }
 /* 스크롤바 없애기 */
 #container::-webkit-scrollbar {
@@ -39,15 +38,16 @@ p {
 
 #container_2 {
   position: absolute;
-  border: solid 1px #9d9d9d;
+  border: solid 1px white;
   border-radius: 12px;
-  top: 90%;
+  top: 70%;
   left: 50%;
-  width: 375px;
-  height: 812px;
+  width: 376px;
+  height: 600px;
   transform: translate(-50%, -50%);
   color: #292929;
   overflow: hidden; /* 컨테이너가 넘치지 않도록 설정 */
+  background: white; /* 배경을 추가하여 뒤의 콘텐츠 가림 */
 }
 
 #top {
