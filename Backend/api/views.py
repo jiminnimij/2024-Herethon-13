@@ -23,11 +23,125 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+import jwt
+from rest_framework.views import APIView
+from .serializers import *
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from django.shortcuts import render, get_object_or_404
+from rest_framework.decorators import action
+from shesplace.settings import SECRET_KEY
 import logging
 logger = logging.getLogger(__name__)
 
 BASE_URL = "http://127.0.0.1:8000/"
 KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/login"
+
+class RegisterAPIView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            
+            # jwt 토큰 접근
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            res = Response(
+                {
+                    "user": serializer.data,
+                    "message": "register successs",
+                    "token": {
+                        "access": access_token,
+                        "refresh": refresh_token,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+            
+            # jwt 토큰 => 쿠키에 저장
+            res.set_cookie("access", access_token, httponly=True)
+            res.set_cookie("refresh", refresh_token, httponly=True)
+            
+            return res
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AuthAPIView(APIView):
+    # 유저 정보 확인
+    def get(self, request):
+        try:
+            # access token을 decode 해서 유저 id 추출 => 유저 식별
+            access = request.COOKIES['access']
+            payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+            pk = payload.get('user_id')
+            user = get_object_or_404(User, pk=pk)
+            serializer = UserSerializer(instance=user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except(jwt.exceptions.ExpiredSignatureError):
+            # 토큰 만료 시 토큰 갱신
+            data = {'refresh': request.COOKIES.get('refresh', None)}
+            serializer = TokenRefreshSerializer(data=data)
+            if serializer.is_valid(raise_exception=True):
+                access = serializer.data.get('access', None)
+                refresh = serializer.data.get('refresh', None)
+                payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+                pk = payload.get('user_id')
+                user = get_object_or_404(User, pk=pk)
+                serializer = UserSerializer(instance=user)
+                res = Response(serializer.data, status=status.HTTP_200_OK)
+                res.set_cookie('access', access)
+                res.set_cookie('refresh', refresh)
+                return res
+            raise jwt.exceptions.InvalidTokenError
+
+        except(jwt.exceptions.InvalidTokenError):
+            # 사용 불가능한 토큰일 때
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # 로그인
+    def post(self, request):
+    	# 유저 인증
+        user = authenticate(
+            email=request.data.get("email"), password=request.data.get("password")
+        )
+        # 이미 회원가입 된 유저일 때
+        if user is not None:
+            serializer = UserSerializer(user)
+            # jwt 토큰 접근
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            res = Response(
+                {
+                    "user": serializer.data,
+                    "message": "login success",
+                    "token": {
+                        "access": access_token,
+                        "refresh": refresh_token,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+            # jwt 토큰 => 쿠키에 저장
+            res.set_cookie("access", access_token, httponly=True)
+            res.set_cookie("refresh", refresh_token, httponly=True)
+            return res
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # 로그아웃
+    def delete(self, request):
+        # 쿠키에 저장된 토큰 삭제 => 로그아웃 처리
+        response = Response({
+            "message": "Logout success"
+            }, status=status.HTTP_202_ACCEPTED)
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+        return response
 
 def kakao_login(request):
     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
@@ -91,7 +205,7 @@ def kakao_callback(request):
 
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
-        accept_status = accept.status_code
+        accept_status = accept.status_code  
 
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
@@ -102,7 +216,6 @@ def kakao_callback(request):
 
     except CustomUser.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
-
         
         user_data = {
             "email" : email,
@@ -114,12 +227,20 @@ def kakao_callback(request):
         }
         print(user_data)
         user = CustomUser.objects.create(
-            kakao_oid=kakao_oid,
             email=email,
-            nickname=nickname,
-            gender=gender,
-            age_range=age_range,
-            profile_image=profile_image
+            defaults={
+                "nickname":f"{nickname}",
+                "kakao_oid":kakao_oid,
+                "profile_image":f"{profile_image}",
+                "age_range":f"{age_range}",
+                "gender":f"{gender}"
+            }
+            # kakao_oid=kakao_oid,
+            # email=email,
+            # nickname=nickname,
+            # gender=gender,
+            # age_range=age_range,
+            # profile_image=profile_image
         )
         # if user.is_valid():
         #     user.save()
@@ -144,6 +265,7 @@ class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
     callback_url = KAKAO_CALLBACK_URI
     client_class = OAuth2Client
+
 
 # def kakao_logout(request):
 #     client_id = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
@@ -180,6 +302,21 @@ class Profile(ModelViewSet):
     def get_queryset(self):
         user = self.request.user  # Get the logged-in usere
         return CustomUser.objects.filter(email=user.email)
+    
+    @action(detail=False, methods=['patch'], url_path='update-nickname')
+    def update_nickname(self, request, *args, **kwargs):
+        user = self.get_queryset().first()  # Get the first user object filtered by email
+        new_nickname = request.data.get('nickname')  # Assuming 'nickname' is in request data
+
+        if new_nickname:
+            user.nickname = new_nickname
+            user.save()
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Nickname field is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
     # queryset = CustomUser.objects.all()
     
 
