@@ -12,6 +12,7 @@ class FreeboardPost(models.Model):
     free_post_content = models.TextField(verbose_name='게시글 내용')
     free_post_created_at = models.DateTimeField(verbose_name='작성일', auto_now_add=True)
     free_post_writer_id = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, verbose_name='글작성자', null=True, blank=True)
+    free_post_is_anonymous = models.BooleanField(verbose_name="익명여부", default=False, null=True)
 
 # 자유게시판 댓글 모델
 class FreeboardPostComment(models.Model):
