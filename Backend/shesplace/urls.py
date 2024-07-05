@@ -23,7 +23,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('freeboard/', include('freeboard.urls')),
-
+    path('recruitboard/', include('recruitboard.urls')),
+    path('goodplace/', include('place.urls')),
+    path('womenonly/', include('place.urls_women_only'))
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/kakao/', include('api.urls')),

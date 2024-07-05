@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     # DRF
     'rest_framework',
 
+    # filter
+    'django_filters',
+
+    # internal APP
     'rest_framework_simplejwt',
     'freeboard',
     'api',
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
 
     # internal APP
     'recruitboard',
+    'place'
 
 ]
 TOKEN_MODEL = None
